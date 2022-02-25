@@ -1,0 +1,32 @@
+server:
+  port: 8000
+spring:
+  application:
+    name: msa-gateway
+  profiles:
+    active: dev
+  config:
+    import: optional:configserver:http://localhost:8888
+  cloud:
+    gateway:
+      routes:
+        - id: lch-msa
+          uri: lb://LCH
+          predicates:
+            - Path=/lch-msa/**
+        - id: lch-msa-support
+          uri: lb://LCH-SUPPORT
+          predicates:
+            - Path=/lch-msa-support/**
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+
+#actuator config
+management:
+  endpoints:
+    web:
+      exposure:
+        include: refresh
